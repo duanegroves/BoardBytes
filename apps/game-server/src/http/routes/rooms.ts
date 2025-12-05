@@ -39,7 +39,7 @@ export function createRoomsRouter(roomManager: RoomManager): Router {
       // Short cache (30 seconds) - room list changes frequently
       res.set('Cache-Control', 'public, max-age=30');
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: rooms,
         count: rooms.length,
@@ -47,7 +47,7 @@ export function createRoomsRouter(roomManager: RoomManager): Router {
     } catch (error) {
       log.error('Failed to fetch room list', { error });
 
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         error: 'Failed to fetch room list',
       });

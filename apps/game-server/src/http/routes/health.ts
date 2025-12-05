@@ -12,7 +12,7 @@ const router = Router();
  * Health check endpoint
  * Returns server status, uptime, and memory usage
  */
-router.get('/health', (_req, res) => {
+router.get('/', (_req, res) => {
   const memUsage = process.memoryUsage();
   const totalMem = os.totalmem();
   const freeMem = os.freemem();
