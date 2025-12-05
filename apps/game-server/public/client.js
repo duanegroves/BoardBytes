@@ -21,6 +21,7 @@ const roomIdInput = document.getElementById('roomId');
 const joinBtn = document.getElementById('joinBtn');
 const refreshRoomsBtn = document.getElementById('refreshRoomsBtn');
 const roomListDiv = document.getElementById('roomList');
+const availableGamesDiv = document.getElementById('availableGames');
 
 const currentRoomIdSpan = document.getElementById('currentRoomId');
 const gameRoomIdSpan = document.getElementById('gameRoomId');
@@ -72,15 +73,61 @@ function joinRoom() {
 }
 
 function startGame() {
-  socket.emit('command:uno:game:start');
+  // Updated to use generic game start command
+  socket.emit('command:common:game:start', { gameType: 'uno' });
 }
 
 function leaveRoom() {
   window.location.reload();
 }
 
-function refreshRoomList() {
-  socket.emit('query:common:room:list');
+async function refreshRoomList() {
+  // Updated to use HTTP endpoint instead of WebSocket
+  try {
+    const response = await fetch('/api/rooms');
+    const result = await response.json();
+    
+    if (result.success) {
+      renderRoomList(result.data);
+    } else {
+      showMessage('Failed to load room list', 'error');
+    }
+  } catch (error) {
+    console.error('Failed to fetch rooms:', error);
+    showMessage('Failed to load room list', 'error');
+  }
+}
+
+async function loadAvailableGames() {
+  // Fetch available games via HTTP
+  try {
+    const response = await fetch('/api/games');
+    const result = await response.json();
+    
+    if (result.success) {
+      renderAvailableGames(result.data);
+    }
+  } catch (error) {
+    console.error('Failed to fetch games:', error);
+  }
+}
+
+function renderAvailableGames(games) {
+  if (!games || games.length === 0) {
+    availableGamesDiv.innerHTML = '';
+    return;
+  }
+  
+  availableGamesDiv.innerHTML = `
+    <div class="games-info">
+      ${games.map(game => `
+        <div class="game-badge">
+          <strong>${game.displayName}</strong>
+          <span class="game-players">${game.minPlayers}-${game.maxPlayers} players</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 function joinRoomFromList(roomId) {
@@ -421,13 +468,13 @@ socket.on('error:uno:uno', (data) => {
 
 socket.on('connect', () => {
   console.log('Connected to server');
-  // Request room list on connect
+  // Load available games and rooms via HTTP on connect
+  loadAvailableGames();
   refreshRoomList();
 });
 
-socket.on('state:common:rooms', (rooms) => {
-  renderRoomList(rooms);
-});
+// Load available games immediately (before WebSocket connects)
+loadAvailableGames();
 
 socket.on('disconnect', () => {
   showMessage('Disconnected from server', 'error');

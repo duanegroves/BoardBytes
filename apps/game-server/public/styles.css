@@ -37,6 +37,44 @@ h1 {
   font-size: 2.5em;
 }
 
+/* Available Games Display */
+.available-games {
+  margin-bottom: 20px;
+}
+
+.games-info {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.game-badge {
+  background: rgba(102, 126, 234, 0.1);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 20px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #667eea;
+}
+
+.game-badge strong {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.game-players {
+  background: rgba(102, 126, 234, 0.15);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #5566d6;
+}
+
 h2 {
   text-align: center;
   color: #667eea;
